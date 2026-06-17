@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Mobile Shop UI</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial;
+        }
+        
+        body {
+            background: #f4f4f4;
+            padding: 10px 1px;
+            background: #c77700;
+        }
+        /* HEADER */
+        
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .title {
+            font-size: 4px;
+            font-weight: bold;
+        }
+        
+        .cart-btn {
+            background: #eedf05;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 12px;
+            display: grid;
+        }
+        /* PRODUCT GRID */
+        
+        .products {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+        /* CARD */
+        
+        .card {
+            background: #dcdcdc;
+            border-radius: 12px;
+            overflow: hidden;
+            padding-bottom: 5px;
+        }
+        /* IMAGE */
+        
+        .card img {
+            width: 100%;
+            height: 130px;
+            object-fit: cover;
+            background: #bc8f8f;
+        }
+        /* CONTENT */
+        
+        .content {
+            padding: 1px;
+        }
+        
+        .name {
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+        
+        .price {
+            font-size: 14px;
+            margin-bottom: 3px;
+        }
+        
+        .stock {
+            font-size: 13px;
+            margin-bottom: 10px;
+        }
+        /* QTY */
+        
+        .qty-box {
+            width: 100%;
+            padding: 1px;
+            border-radius: 8px;
+            border: none;
+            margin-bottom: 10px;
+            font-size: 13px;
+        }
+        /* BUTTON */
+        
+        .add-btn {
+            width: 100%;
+            border: none;
+            background: #c77700;
+            color: white;
+            padding: 10px;
+            border-radius: 20px;
+            font-size: px;
+            cursor: pointer;
+        }
+        
+        .add-btn:hover {
+            opacity: 0.9;
+        }
+        /* MOBILE */
+        
+        @media(max-width:500px) {
+            .title {
+                font-size: 30px;
+            }
+            .products {
+                gap: 10px;
+            }
+            .card img {
+                height: 110px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <div class="topbar">
+
+        <div class="title">
+            Order na
+        </div>
+
+        <button class="cart-btn" onclick="goCart()">
+            Cart
+        </button>
+        <button class="cart-btn" onclick="goback()">
+            back
+ </button>
+    </div>
+
+    <!-- PRODUCTS -->
+    <div class="products" id="products"></div>
+
+    <script>
+        function goback() {
+            window.location.href = "index.html";
+        }
+
+        function goCart() {
+            window.location.href = "cart.html";
+        }
+
+        let products =
+            JSON.parse(localStorage.getItem("products")) || [];
+
+        let cart =
+            JSON.parse(localStorage.getItem("cart")) || [];
+
+        let qty =
+            JSON.parse(localStorage.getItem("qty")) || [];
+
+        function render() {
+
+            let html = "";
+
+            products.forEach((p, i) => {
+
+                html += `
+
+                <div class="card">
+
+                    <img src="${p.img}">
+
+                    <div class="content">
+
+                        <div class="name">
+                            ${p.name}
+                        </div>
+
+                        <div class="price">
+                            Price: ₱${p.price}
+                        </div>
+
+                        <div class="stock">
+                            Quantity: ${p.stock}
+                        </div>
+
+                        <input
+                            id="q${i}"
+                            class="qty-box"
+                            type="number"
+                            value="1"
+                            min="1"
+                            max="${p.stock}"
+                        >
+
+                        <button
+                            class="add-btn"
+                            onclick="add(${i})"
+                        >
+                            AddtoCart
+                        </button>
+
+                    </div>
+
+                </div>
+
+                `;
+            });
+
+            document.getElementById("products").innerHTML = html;
+        }
+
+        function add(i) {
+
+            let q =
+                Number(document.getElementById("q" + i).value);
+
+            if (q <= 0) {
+                alert("Invalid quantity!");
+                return;
+            }
+
+            if (q > products[i].stock) {
+                alert("Not enough stock!");
+                return;
+            }
+
+            cart[i] = true;
+            qty[i] = q;
+
+            localStorage.setItem(
+                "cart",
+                JSON.stringify(cart)
+            );
+
+            localStorage.setItem(
+                "qty",
+                JSON.stringify(qty)
+            );
+
+            alert("Added To Cart!");
+        }
+
+
+        render();
+    </script>
+
+</body>
+
+</html>

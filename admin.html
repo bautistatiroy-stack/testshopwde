@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Modern Admin Panel</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="login-box" id="loginBox">
+
+        <h2>🍔 Food Admin Login</h2>
+
+
+        <input type="text" id="adminUser" placeholder="Username">
+        <input type="password" id="adminPass" placeholder="Password">
+        <input type="email" id="adminEmail" placeholder="Email">
+
+        <div>
+            <button class="back-btn" onclick="goShop()">
+            back
+ </button>
+
+            <button class="back-btn" onclick="loginAdmin()">
+            Login
+        </button>
+
+            <div id="adminPanel" style="display:none;">
+
+
+                <h1>🛒 Admin Dashboard</h1>
+                <button class="logout-btn" onclick="logoutAdmin()">
+                Logout
+            </button>
+                <button class="add-btn" onclick="remotecontrol()">
+                        Remote Control
+                    </button>
+
+                <div class="container">
+
+                    <div class="form-box">
+
+                        <h2>Add Product</h2>
+
+                        <input id="name" placeholder="Product Name">
+
+                        <input id="price" type="number" placeholder="Price">
+
+                        <input id="stock" type="number" placeholder="Stock">
+
+                        <input id="img" placeholder="Image URL">
+
+                        <button class="add-btn" onclick="addProduct()">
+                Add Product
+            </button>
+                    </div>
+
+                    <div class="products" id="list"></div>
+
+                </div>
+
+                <script src="admin.js"></script>
+
+                <script>
+                    function goShop() {
+                        window.location.href = "index.html";
+                    }
+
+                    function remotecontrol() {
+                        window.location.href = "remote.html";
+                    }
+                </script>
+                <script>
+                    /*product add remove quntity price*/
+                    let products =
+                        JSON.parse(localStorage.getItem("products")) || [];
+
+                    function addProduct() {
+
+                        let name =
+                            document.getElementById("name").value;
+
+                        let price =
+                            document.getElementById("price").value;
+
+                        let stock =
+                            document.getElementById("stock").value;
+
+                        let img =
+                            document.getElementById("img").value;
+
+                        if (!name || !price || !stock || !img) {
+                            alert("Complete all fields!");
+                            return;
+                        }
+
+                        products.push({
+                            name,
+                            price: Number(price),
+                            stock: Number(stock),
+                            img
+                        });
+
+                        localStorage.setItem(
+                            "products",
+                            JSON.stringify(products)
+                        );
+
+                        render();
+
+                        document.getElementById("name").value = "";
+                        document.getElementById("price").value = "";
+                        document.getElementById("stock").value = "";
+                        document.getElementById("img").value = "";
+
+                        alert("Product Added!");
+                    }
+
+                    function render() {
+
+                        let html = "";
+
+                        products.forEach((p, i) => {
+
+                            html += `
+                
+                <div class="card">
+
+                    <img src="${p.img}">
+
+                    <div class="card-content">
+
+                        <h3>${p.name}</h3>
+
+                        <div class="price">
+                            ₱${p.price}
+                        </div>
+
+                        <p>Stock:</p>
+
+                        <input
+                            class="stock-input"
+                            type="number"
+                            value="${p.stock}"
+                            onchange="updateStock(${i}, this.value)"
+                        >
+
+                        <button
+                            class="remove-btn"
+                            onclick="deleteItem(${i})"
+                        >
+                            Remove
+                        </button>
+
+                    </div>
+
+                </div>
+                `;
+                        });
+
+                        document.getElementById("list").innerHTML = html;
+                    }
+
+                    function updateStock(i, value) {
+
+                        products[i].stock = Number(value);
+
+                        localStorage.setItem(
+                            "products",
+                            JSON.stringify(products)
+                        );
+                    }
+
+                    function deleteItem(i) {
+
+                        let confirmDelete =
+                            confirm("Delete this product?");
+
+                        if (!confirmDelete) return;
+
+                        products.splice(i, 1);
+
+                        localStorage.setItem(
+                            "products",
+                            JSON.stringify(products)
+                        );
+
+                        render();
+                    }
+
+                    render();
+                </script>
+</body>
+
+</html>

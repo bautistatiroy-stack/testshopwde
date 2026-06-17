@@ -1,0 +1,97 @@
+<h2>Admin Control</h2>
+<style>
+    body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        font-family: Arial, sans-serif;
+        background-color: #e9ac04;
+    }
+    
+    button {
+        padding: 10px 20px;
+        margin: 10px;
+        font-size: 16px;
+        cursor: pointer;
+        border-radius: 10px;
+        background-color: #03f40b;
+    }
+    
+    .logout-btn {
+        background-color: #f44336;
+        color: white;
+        border: none;
+        border-radius: 10px;
+    }
+    
+    .white:hover {
+        background-color: #008CBA;
+        color: white;
+        border: none;
+        border-radius: 10px;
+    }
+    
+    .add-btn {
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 10px;
+    }
+    
+    .white {
+        background-color: #fff;
+        color: #333;
+        border: 2px solid #ccc;
+    }
+    
+    @keyframes float {
+        0% {
+            transform: translateY(0);
+        }
+        50% {
+            transform: translateY(-10px);
+        }
+        100% {
+            transform: translateY(0);
+        }
+    }
+    
+    .white {
+        animation: float 2s ease-in-out infinite;
+    }
+</style>
+<button onclick="openShop()" class="white">🟢 OPEN SHOP</button>
+<button onclick="closeShop()" class="white">🔴 CLOSE SHOP</button>
+<button onclick="back()" class="white">⬅️ Back</button>
+<script>
+    function back() {
+        window.location.href = "admin.html";
+    }
+    const API = "https://script.google.com/macros/s/AKfycbzEeIKctiFOYS4ZfUhN2HXT9MVzFfGdeazpIQ0yP9tQWs9jdsgSg1jS-RDj0IpY00HQ9g/exec";
+
+    function openShop() {
+        fetch(API, {
+            method: "POST",
+            body: new URLSearchParams({
+                action: "shop",
+                value: "true"
+            })
+        }).then(() => {
+            alert("Shop is OPEN 🟢");
+        });
+    }
+
+    function closeShop() {
+        fetch(API, {
+            method: "POST",
+            body: new URLSearchParams({
+                action: "shop",
+                value: "false"
+            })
+        }).then(() => {
+            alert("Shop is CLOSED 🔴");
+        });
+    }
+</script>

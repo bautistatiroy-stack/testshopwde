@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Checkout</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            padding: 20px;
+        }
+        
+        button {
+            width: 100%;
+            padding: 10px 10px;
+            background: green;
+            color: white;
+            border: none;
+            margin-top: 10px;
+            cursor: pointer;
+            border-radius: 10px;
+        }
+        
+        button:disabled {
+            background: gray;
+        }
+        
+        .item {
+            border-bottom: 1px solid #ccc;
+            padding: 10px 0;
+        }
+        
+        #msg {
+            margin-top: 15px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h2>🧾 Checkout</h2>
+
+    <form id="form">
+
+        <input type="hidden" name="name" id="name">
+        <input type="hidden" name="address" id="address">
+        <input type="hidden" name="phone" id="phone">
+        <input type="hidden" name="items" id="items">
+        <input type="hidden" name="delivery" id="delivery">
+        <input type="hidden" name="total" id="total">
+
+        <p><b>Name:</b> <span id="n"></span></p>
+        <p><b>Address:</b> <span id="a"></span></p>
+        <p><b>Phone:</b> <span id="p"></span></p>
+        <p><b>Delivery Date:</b> <span id="d"></span></p>
+
+        <h3>Items:</h3>
+        <div id="itemList"></div>
+
+        <h3>Total: ₱<span id="t"></span></h3>
+        <button type="submit" id="submitBtn" onclick="goCheckout()">Send Order</button>
+
+        <button class="backBtn" onclick="goShop()">
+            ⬅ Back Shop
+        </button>
+
+
+
+    </form>
+
+    <p id="msg"></p>
+    <script src="admin.js"></script>
+
+    <script>
+        function goShop() {
+            window.location.href = "cart.html";
+        }
+
+        let name = localStorage.getItem("name") || "";
+        let address = localStorage.getItem("address") || "";
+        let phone = localStorage.getItem("phone") || "";
+        let timetodelever = localStorage.getItem("delivery") || "";
+
+        // CART
+        let cartItems =
+            JSON.parse(localStorage.getItem("cartItems")) || [];
+
+        let total = 0;
+        let itemsHTML = "";
+
+        // BUILD ITEMS
+        cartItems.forEach(item => {
+
+            total += item.subtotal;
+
+            itemsHTML += `
+        <div class="item">
+            <b>${item.name}</b><br>
+            Price: ₱${item.price}<br>
+            Qty: ${item.qty}<br>
+            Subtotal: ₱${item.subtotal}
+        </div>
+    `;
+        });
+
+        // DISPLAY
+        document.getElementById("n").innerText = name;
+        document.getElementById("a").innerText = address;
+        document.getElementById("p").innerText = phone;
+        document.getElementById("d").innerText = timetodelever;
+        document.getElementById("itemList").innerHTML = itemsHTML;
+        document.getElementById("t").innerText = total;
+
+        // HIDDEN INPUTS
+        document.getElementById("name").value = name;
+        document.getElementById("address").value = address;
+        document.getElementById("phone").value = phone;
+        document.getElementById("delivery").value = timetodelever;
+        document.getElementById("items").value =
+            JSON.stringify(cartItems);
+        document.getElementById("total").value = total;
+
+        // SUBMIT
+        form.addEventListener("submit", async(e) => {
+
+            e.preventDefault();
+
+            submitBtn.disabled = true;
+            submitBtn.innerText = "⏳ Sending...";
+
+            msg.innerText = "Submitting order...";
+
+            try {
+
+                const response = await fetch(url, {
+                    method: "POST",
+                    body: new FormData(form)
+                });
+
+                const result = await response.text();
+
+                if (response.ok) {
+
+                    msg.innerText =
+                        "✅ Order Sent Successfully";
+
+                    localStorage.removeItem("cartItems");
+
+                } else {
+
+                    msg.innerText =
+                        "❌ Failed: " + result;
+                }
+
+            } catch (error) {
+
+                msg.innerText =
+                    "❌ Network Error";
+            }
+
+            submitBtn.disabled = false;
+            submitBtn.innerText = "Send Order";
+        });
+    </script>
+
+</body>
+
+</html>

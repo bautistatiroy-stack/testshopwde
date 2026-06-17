@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <base target="_top">
+    <title>Food Shop</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            margin: 0;
+            background: #f4f4f4;
+        }
+        
+        header {
+            background: #ff5722;
+            color: white;
+            padding: 15px;
+            text-align: center;
+        }
+        
+        .container {
+            padding: 20px;
+        }
+        
+        .card {
+            background: white;
+            padding: 10px;
+            margin: 10px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        button {
+            padding: 8px;
+            margin: 5px;
+            cursor: pointer;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        input {
+            padding: 6px;
+            margin: 5px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h2>Food Ordering System</h2>
+    </header>
+
+    <div class="container">
+
+        <!-- ADMIN PANEL -->
+        <div id="adminPanel">
+            <h3>Admin - Add / Update Product</h3>
+
+            <input id="id" placeholder="ID">
+            <input id="name" placeholder="Name">
+            <input id="price" placeholder="Price">
+            <input id="qty" placeholder="Quantity">
+
+            <button onclick="save()">Save Product</button>
+
+            <hr>
+        </div>
+
+        <!-- SHOP -->
+        <div id="shop">
+            <h3>Client Shop</h3>
+            <div id="productList"></div>
+            <button onclick="goCheckout()">Checkout</button>
+        </div>
+
+        <!-- CART -->
+        <div id="checkout" class="hidden">
+            <h3>Checkout</h3>
+
+            <input id="cname" placeholder="Name">
+            <input id="caddress" placeholder="Address">
+            <input id="cphone" placeholder="Phone">
+
+            <div id="cartList"></div>
+
+            <button onclick="backShop()">Back</button>
+            <button onclick="generateReceipt()">Confirm Checkout</button>
+        </div>
+
+        <!-- RECEIPT -->
+        <div id="receipt" class="hidden">
+            <h3>Receipt</h3>
+            <div id="receiptData"></div>
+        </div>
+
+    </div>
+
+    <script>
+        let cart = [];
+        let products = [];
+
+        // LOAD PRODUCTS
+        function loadProducts() {
+            google.script.run.withSuccessHandler(function(data) {
+                products = data;
+                displayProducts();
+            }).getProducts();
+        }
+
+        // DISPLAY SHOP
+        function displayProducts() {
+            let html = "";
+            products.forEach(p => {
+                html += `
+      <div class="card">
+        <div>
+          <b>${p.name}</b><br>
+          ₱${p.price} | Qty: ${p.qty}
+        </div>
+        <button onclick="addToCart('${p.name}', ${p.price})">Add</button>
+      </div>
+    `;
+            });
+            document.getElementById("productList").innerHTML = html;
+        }
+
+        // ADD TO CART
+        function addToCart(name, price) {
+            cart.push({
+                name,
+                price
+            });
+            alert("Added to cart");
+        }
+
+        // CHECKOUT PAGE
+        function goCheckout() {
+            document.getElementById("shop").classList.add("hidden");
+            document.getElementById("checkout").classList.remove("hidden");
+
+            let html = "";
+            let total = 0;
+
+            cart.forEach(c => {
+                html += `<div>${c.name} - ₱${c.price}</div>`;
+                total += c.price;
+            });
+
+            html += `<h4>Total: ₱${total}</h4>`;
+            document.getElementById("cartList").innerHTML = html;
+        }
+
+        // BACK BUTTON
+        function backShop() {
+            document.getElementById("checkout").classList.add("hidden");
+            document.getElementById("shop").classList.remove("hidden");
+        }
+
+        // RECEIPT
+        function generateReceipt() {
+            let name = document.getElementById("cname").value;
+            let address = document.getElementById("caddress").value;
+            let phone = document.getElementById("cphone").value;
+
+            let total = 0;
+            let items = "";
+
+            cart.forEach(c => {
+                items += `<div>${c.name} - ₱${c.price}</div>`;
+                total += c.price;
+            });
+
+            document.getElementById("checkout").classList.add("hidden");
+            document.getElementById("receipt").classList.remove("hidden");
+
+            document.getElementById("receiptData").innerHTML = `
+    <p><b>Name:</b> ${name}</p>
+    <p><b>Address:</b> ${address}</p>
+    <p><b>Phone:</b> ${phone}</p>
+    <hr>
+    ${items}
+    <h3>Total: ₱${total}</h3>
+  `;
+        }
+
+        // SAVE PRODUCT (ADMIN)
+        function save() {
+            let product = {
+                id: document.getElementById("id").value,
+                name: document.getElementById("name").value,
+                price: parseFloat(document.getElementById("price").value),
+                qty: parseInt(document.getElementById("qty").value)
+            };
+
+            google.script.run.withSuccessHandler(function(res) {
+                alert(res);
+                loadProducts();
+            }).saveProduct(product);
+        }
+
+        loadProducts();
+    </script>
+
+</body>
+
+</html>

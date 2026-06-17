@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial;
+        }
+        
+        body {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(rgba(0, 0, 0, .6), rgba(0, 0, 0, .6)), url('https://th.bing.com/th/id/OIP.C8811Y490Y4l_MtSLtv84AHaEP');
+            background-size: cover;
+            background-position: center;
+            overflow: hidden;
+        }
+        /* LOGIN BOX */
+        
+        .login-box {
+            width: 100%;
+            max-width: 380px;
+            padding: 30px;
+            border-radius: 20px;
+            background: rgba(144, 140, 140, 0.511);
+            color: #fff;
+        }
+        /* INPUT */
+        
+        .input-box {
+            margin: 12px 0;
+        }
+        
+        input {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            outline: none;
+        }
+        /* BUTTON */
+        
+        button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .login-btn {
+            background: linear-gradient(45deg, #ea580c, #fb923c);
+            color: white;
+        }
+        
+        .login-btn:hover {
+            background: linear-gradient(45deg, #ad5f27, #216b44);
+        }
+        /* TYPING */
+        
+        .typing-box {
+            margin-top: 15px;
+            height: 25px;
+            position: relative;
+            font: size 10px;
+        }
+        
+        .typing {
+            position: absolute;
+            white-space: nowrap;
+            overflow: hidden;
+            width: 0;
+            border-right: 2px solid #fff;
+        }
+        
+        .t1 {
+            animation: type1 6s infinite;
+            font: size 10px;
+        }
+        
+        .t2 {
+            animation: type2 6s infinite;
+            font: size 7px;
+        }
+        
+        .t3 {
+            animation: type3 6s infinite;
+            font: size 1px;
+        }
+        
+        @keyframes type1 {
+            0% {
+                width: 0;
+                opacity: 0
+            }
+            10% {
+                opacity: 1
+            }
+            30% {
+                width: 25ch;
+                opacity: 1
+            }
+            40% {
+                opacity: 0
+            }
+            100% {
+                width: 0;
+                opacity: 0
+            }
+        }
+        
+        @keyframes type2 {
+            0% {
+                width: 0;
+                opacity: 0
+            }
+            35% {
+                opacity: 0
+            }
+            45% {
+                opacity: 1
+            }
+            65% {
+                width: 25ch;
+                opacity: 1
+            }
+            75% {
+                opacity: 0
+            }
+            100% {
+                width: 0;
+                opacity: 0
+            }
+        }
+        
+        @keyframes type3 {
+            0% {
+                width: 0;
+                opacity: 0
+            }
+            65% {
+                opacity: 0
+            }
+            75% {
+                opacity: 1
+            }
+            90% {
+                width: 20ch;
+                opacity: 1
+            }
+            100% {
+                opacity: 0
+            }
+        }
+        /* FLOATING ICONS */
+        
+        .snack {
+            position: absolute;
+            bottom: -50px;
+            font-size: 24px;
+            animation: float 10s linear infinite;
+        }
+        
+        @keyframes float {
+            from {
+                transform: translateY(0)
+            }
+            to {
+                transform: translateY(-120vh)
+            }
+        }
+        
+        .snack img {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+            border-radius: 200px;
+        }
+        /* CART */
+        
+        .cart-container {
+            max-width: 1200px;
+            margin: 20px auto;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- FLOATING -->
+    <div class="snack" style="left:10%">
+        <img src="burger.jpg" alt="burger">
+    </div>
+
+    <div class="snack" style="left:30%; animation-delay:9s;">
+        <img src="spagithie.jpg" alt="spagithie">
+    </div>
+
+    <div class="snack" style="left:50%; animation-delay:3s;">
+        <img src="fries.jpg" alt="fries">
+    </div>
+
+    <div class="snack" style="left:70%; animation-delay:2s;">
+        <img src="donut.jpg" alt="donut">
+    </div>
+    <div class="login-box">
+        <div id="shop"></div>
+        <h2>🍔 Food Client Login</h2>
+
+        <div class="input-box">
+            <input id="name" placeholder="Full Name">
+        </div>
+
+        <div class="input-box">
+            <input id="address" placeholder="Address">
+        </div>
+
+        <div class="input-box">
+            <input id="phone" placeholder="Phone">
+        </div>
+
+
+        <div class="input-box">
+            <input id="delivery" placeholder="Delivery-Date">
+        </div>
+
+        <button class="login-btn" onclick="login()">Login</button>
+        <button class="login-btn" onclick="goAdmin()">Admin Panel</button>
+
+        <div class="typing-box">
+            <div class="typing t1">👋 Hello Client</div>
+            <div class="typing t2">🍔 Welcome to Fast Food</div>
+            <div class="typing t3">🎉 Enjoy Ordering</div>
+        </div>
+
+    </div>
+
+    <script>
+        /*foropen and close shop*/
+        const API = "https://script.google.com/macros/s/AKfycbzEeIKctiFOYS4ZfUhN2HXT9MVzFfGdeazpIQ0yP9tQWs9jdsgSg1jS-RDj0IpY00HQ9g/exec";
+
+        // 🔥 CHECK SHOP STATUS
+        async function loadShop() {
+            try {
+                const res = await fetch(API);
+                const data = await res.json();
+
+                const status = String(data.shop_open).toLowerCase();
+
+                if (status === "false") {
+                    document.body.innerHTML = `
+                <div style="
+                    height:100vh;
+                    display:flex;
+                    justify-content:center;
+                    align-items:center;
+                    flex-direction:column;
+                    font-family:Arial;
+                    background-color:white;
+                    color:black;
+                    padding:100%;
+                ">
+                    <h1>SHOP IS CLOSED BUSY</h1>
+                    <p>Please come back later</p>
+                </div>
+            `;
+                    return;
+                }
+
+                document.getElementById("shop").innerHTML =
+                    "<h2 style='color:lime;text-align:center;font-size:10px;'>🟢 Shop is OPEN</h2>";
+
+            } catch (err) {
+                document.body.innerHTML = `
+            <div style="text-align:center;padding:50px;color:black;">
+                <h1>⚠️ Server Error</h1>
+                <p>Cannot connect to Apps Script</p>
+            </div>
+        `;
+            }
+        }
+
+        // 🔥 ADMIN
+        function goAdmin() {
+            window.location.href = "admin.html";
+        }
+
+        function login() {
+            localStorage.setItem("name", document.getElementById("name").value);
+            localStorage.setItem("address", document.getElementById("address").value);
+            localStorage.setItem("phone", document.getElementById("phone").value);
+            localStorage.setItem("delivery", document.getElementById("delivery").value);
+            window.location.href = "shop.html";
+        }
+
+        loadShop();
+    </script>
+
+</body>
+
+</html>
